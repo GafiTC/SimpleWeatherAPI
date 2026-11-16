@@ -3,6 +3,8 @@ import json
 import sys
 import datetime as dt
 import os
+import textwrap
+import datetime
 from dotenv import load_dotenv
 load_dotenv()
 api_key = os.getenv("API_KEY")
@@ -33,6 +35,17 @@ if httpResponse.status_code != 200:
 print(json.dumps(httpResponse.json(),indent=3))
 print()
 print(f"{3 * count}-houre forecast for {httpResponse.json()["city"]["name"]} (3-hour increments):")
+
+for x in httpResponse.json()["list"]:
+    print(textwrap.dedent(f'''
+        {datetime.datetime.fromtimestamp(x["dt"]).strftime("%a, %b %#d, %Y, %#I:%M %p")}
+        Condition: {"/".join(list(map(lambda x: x["main"], x["weather"])))}
+        Temp: {round(x["main"]["temp"])}°F
+        Feels like: {round(x["main"]["feels_like"])}°F
+        Low temp: {round(x["main"]["temp_min"])}°F
+        High temp: {round(x["main"]["temp_max"])}°F
+        Humidity: {round(x["main"]["humidity"])}%       
+    '''))
 
 
 
