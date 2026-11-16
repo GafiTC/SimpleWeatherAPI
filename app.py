@@ -8,11 +8,11 @@ import datetime
 from dotenv import load_dotenv
 load_dotenv()
 api_key = os.getenv("API_KEY")
-location = "New York"
-url = f"http://api.openweathermap.org/geo/1.0/direct?q={location}&limit=1&appid={api_key}"
+locationInput = input("What city's weather would you like to look at?")
+#Calls the Geocoding API to determine the longitude and lattitude of a given city
+url = f"http://api.openweathermap.org/geo/1.0/direct?q={locationInput}&limit=1&appid={api_key}"
 httpResponse = requests.get(url)
-print(json.dumps(httpResponse.json(),indent=3))
-
+#print(json.dumps(httpResponse.json(),indent=3))
 if httpResponse.status_code == 200:
     data = httpResponse.json()
     if len(data):
@@ -20,7 +20,7 @@ if httpResponse.status_code == 200:
         coordinates['lat']= data[0]['lat']
         coordinates['lon']=data[0]['lon']
     else:
-        sys.exit(f"Location not found for {location}")
+        sys.exit(f"Location not found for {locationInput}. Please re-run the program")
 else:
     sys.exit(f"{httpResponse.status_code} {httpResponse.reason}")
 
@@ -32,8 +32,7 @@ httpResponse = requests.get(url)
 if httpResponse.status_code != 200:
     sys.exit(f"{httpResponse.status_code} {httpResponse.reason}")
 
-print(json.dumps(httpResponse.json(),indent=3))
-print()
+#print(json.dumps(httpResponse.json(),indent=3))
 print(f"{3 * count}-houre forecast for {httpResponse.json()["city"]["name"]} (3-hour increments):")
 
 for x in httpResponse.json()["list"]:
